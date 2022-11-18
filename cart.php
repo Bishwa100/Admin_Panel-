@@ -53,9 +53,9 @@
                        <?php 
                         $user_products_result=mysqli_query($con,$user_products_query) or die(mysqli_error($con));
                         $no_of_user_products= mysqli_num_rows($user_products_result);
-                        $counter=1;
+                        $counter=1;             
+                        
                        while($row=mysqli_fetch_array($user_products_result)){
-                           
                          ?>
                         <tr>
                             <th><?php echo $counter ?></th><th><?php echo $row['item_name']?></th><th><?php echo $row['price']?></th>
@@ -63,13 +63,30 @@
                         </tr>
                        <?php $counter=$counter+1;}?>
                         <tr>
-                            <th></th><th>Total</th><th>Rs <?php echo $sum;?>/-</th><th><a href="success.php?id=<?php echo $user_id?>" class="btn btn-primary">Confirm Order</a></th>
+                            <th></th><th>Total</th><th>Rs <?php  
+
+                            if (!isset ($_GET['id'])){
+                            echo $sum;
+                            ?><th><a href="discount.php?id=<?php echo $user_id?>" class="btn btn-primary">Discount Coupon</a></th>
+                            <?php 
+                            }
+                            else{
+                                $id = $_GET['id'];
+                            $sqlc= "select * from coupon where id ='$id'";
+                            $resc= mysqli_query($con, $sqlc);
+                            $rowc= mysqli_fetch_assoc($resc);
+                            $price_dis = ($sum * $rowc['coupon_rate'])/100;
+                            $sum= $sum-$price_dis;
+                             echo $sum;
+                        
+                    }?>/-</th>
+                            
                         </tr>
                     </tbody>
-                </table>
+                </table><a href="success.php?id=<?php echo $user_id?>" class="btn btn-primary">Confirm Order</a>
             </div>
             <br><br><br><br><br><br><br><br><br><br>
-            
+                              
         </div>
     </body>
 </html>
